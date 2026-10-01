@@ -110,7 +110,29 @@ try {
   const { selectPermission } = await server.ssrLoadModule('/src/features/admin/permissionSelection.ts')
   const { SkillEditor } = await server.ssrLoadModule('/src/features/admin/pages/AdminSkillsPage.tsx')
   const { foundationLessons } = await server.ssrLoadModule('/src/features/foundations/content.ts')
-  const { FoundationQuiz, ResultReview } = await server.ssrLoadModule('/src/features/foundations/FoundationsPage.tsx')
+  const { FoundationQuiz, ResultReview, FoundationCardList } = await server.ssrLoadModule('/src/features/foundations/FoundationsPage.tsx')
+  const { foundationAccess } = await server.ssrLoadModule('/src/features/foundations/access.ts')
+  const { FoundationGate } = await server.ssrLoadModule('/src/app/router/RequireFoundation.tsx')
+  test('Other learning areas require the entire Pinyin curriculum, with an explicit route back to unfinished work', () => {
+    assert.equal(foundationAccess().unlocked, false)
+    const lessons = [{ slug: 'pinyin', title: 'Pinyin cơ bản', completed: true, locked: false }, { slug: 'tones', title: 'Thanh điệu', completed: false, locked: false }]
+    assert.equal(foundationAccess(lessons).unlocked, false)
+    const html = renderToStaticMarkup(h(MemoryRouter, null, h(FoundationGate, { lessons, signedIn: true })))
+    assert.ok(html.includes('href="/foundations/tones"'))
+    assert.ok(html.includes('1/2 bài đã hoàn thành'))
+    assert.equal(foundationAccess(lessons.map(lesson => ({ ...lesson, completed: true }))).unlocked, true)
+    assert.equal(foundationAccess(lessons.map(lesson => ({ ...lesson, completed: true, locked: true }))).unlocked, false)
+  })
+  test('Locked foundation cards expose no lesson link while current and completed lessons remain accessible', () => {
+    const base = { title: 'Pinyin', subtitle: 'Học từng bước', minutes: 5, symbol: '拼', position: 1, version: 1, prerequisiteSlug: null, prerequisiteTitle: null, completed: false }
+    const lessons = [{ ...base, slug: 'first', locked: false, completed: true }, { ...base, slug: 'second', locked: false }, { ...base, slug: 'third', locked: true, prerequisiteSlug: 'second', prerequisiteTitle: 'Bài hai' }]
+    const html = renderToStaticMarkup(h(MemoryRouter, null, h(FoundationCardList, { lessons })))
+    assert.ok(html.includes('href="/foundations/first"'))
+    assert.ok(html.includes('href="/foundations/second"'))
+    assert.ok(!html.includes('href="/foundations/third"'))
+    assert.ok(html.includes('aria-disabled="true"'))
+    assert.ok(html.includes('Hoàn thành Bài hai để mở'))
+  })
   const { FoundationEditor } = await server.ssrLoadModule('/src/features/admin/pages/AdminFoundationsPage.tsx')
   test('Removing skill oversight preserves unrelated account permissions', () => {
     assert.deepEqual(selectPermission(['users.read', 'users.update', 'users.skills.read'], 'users.skills.read', false), ['users.read', 'users.update'])
@@ -119,6 +141,14 @@ try {
   })
   const { RoadmapContent } = await server.ssrLoadModule('/src/features/learner/LearningRoadmap.tsx')
   const { nextRoadmapStep } = await server.ssrLoadModule('/src/features/learner/roadmap.ts')
+  test('Roadmap neither recommends locked lessons nor treats locked-only curriculum as complete', () => {
+    const locked = { stage: 'Pinyin', title: 'Bài khóa', path: '/foundations/locked', status: 'LOCKED' }
+    assert.equal(nextRoadmapStep([locked]), undefined)
+    const html = renderToStaticMarkup(h(MemoryRouter, null, h(RoadmapContent, { steps: [locked], signedIn: true })))
+    assert.ok(!html.includes('href="/foundations/locked"'))
+    assert.ok(!html.includes('Bạn đã hoàn thành tất cả'))
+    assert.ok(html.includes('Hoàn thành bài trước để mở'))
+  })
   test('Roadmap prioritizes unfinished work and handles empty and completed curricula', () => {
     const fresh = { stage: 'Pinyin', title: 'Bài mới', path: '/foundations/pinyin', status: 'NEW' }
     const started = { stage: '4 kỹ năng', title: 'Bài đang luyện', path: '/skills/attempts/example', status: 'STARTED' }
@@ -157,7 +187,7 @@ try {
     assert.ok(html.includes('name="newPassword"'));
     assert.ok(html.includes('name="confirmPassword"'));
     assert.ok(html.includes('autoComplete="new-password"'));
-    assert.ok(html.includes('minLength="12"'));
+    assert.ok(html.includes('minLength="8"'));
     assert.ok(!html.includes('Liên kết thiếu mã xác nhận'));
     assert.ok(!html.includes('sample-link'));
   });
@@ -216,12 +246,29 @@ try {
       const html = renderToStaticMarkup(h(FoundationQuiz, { lesson }))
       assert.ok(html.includes('type="radio"'))
       assert.ok(html.includes('Đăng nhập trước khi làm bài'))
-      assert.match(html, /<button[^>]*disabled=""[^>]*>Kiểm tra đáp án/)
+      assert.match(html, /<button[^>]*disabled=""[^>]*>Câu tiếp →/)
+      assert.ok(!html.includes('type="submit"'))
       assert.ok(!html.includes('Cần ôn lại. Đáp án:'))
     }
     const result = renderToStaticMarkup(h(ResultReview, { result: { score: 0, correctCount: 0, total: 1, saved: true, questions: [{ prompt: '<script>bad</script>', options: ['a', 'b'], selected: 1, correct: 0, explanation: 'Review' }] } }))
     assert.ok(result.includes('0/100 điểm')); assert.ok(result.includes('Đã lưu vào tài khoản'))
     assert.ok(result.includes('Cần ôn lại')); assert.ok(!result.includes('<script>bad'))
+  })
+
+  const { FoundationSoundLab, FoundationListeningDrill } = await server.ssrLoadModule('/src/features/foundations/FoundationSoundLab.tsx')
+  const { listeningChoices } = await server.ssrLoadModule('/src/features/foundations/listeningChoices.ts')
+  test('Sound library loads only the selected audio and listening practice starts without exposing the answer', () => {
+    const examples = ['mā','má','mǎ','mà'].map((pinyin,index)=>({symbol:pinyin,pinyin,hanzi:'妈',meaning:'Mẫu',tip:'Nghe mẫu',audioSrc:`/audio/foundations/ma${index+1}.mp3`}))
+    const study = renderToStaticMarkup(h(FoundationSoundLab,{examples}))
+    assert.equal((study.match(/<audio/g) ?? []).length,1)
+    assert.ok(study.includes('Luyện nghe'));assert.ok(study.includes('Tìm âm hoặc nghĩa'))
+    const drill = renderToStaticMarkup(h(FoundationListeningDrill,{examples}))
+    assert.ok(drill.includes('Bắt đầu luyện nghe'));assert.ok(!drill.includes('type="radio"'))
+    for(let round=0;round<8;round++) {
+      const choices=listeningChoices([...examples,examples[1]],examples[round%4],round)
+      assert.equal(new Set(choices.map(item=>item.pinyin)).size,choices.length)
+      assert.equal(choices.filter(item=>item.pinyin===examples[round%4].pinyin).length,1)
+    }
   })
 
   test('Foundation reader can inspect content but cannot edit or publish', () => {
@@ -240,6 +287,10 @@ try {
 
   await test('Every foundation example has a bundled audio file', async () => {
     const manifest = JSON.parse(await readFile('src/features/foundations/audio.json', 'utf8'))
+    for (const path of Object.values(manifest)) {
+      assert.ok(path.startsWith('/audio/'))
+      assert.ok((await stat('public' + path)).size > 1000)
+    }
     for (const lesson of foundationLessons) for (const example of lesson.examples) {
       const path = manifest[example.hanzi]
       assert.ok(path?.startsWith('/audio/'))

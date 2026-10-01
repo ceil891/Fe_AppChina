@@ -6,6 +6,7 @@ import { authApi } from '../../auth/api/authApi'
 import { Link } from 'react-router-dom'
 import '../../../shared/styles/study.css'
 import { ChangePasswordForm } from '../../auth/components/ChangePasswordForm'
+import '../profile.css'
 
 export function ProfilePage() {
   const { user, setUser } = useAuth()
@@ -20,9 +21,9 @@ export function ProfilePage() {
     catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được hồ sơ.') }
     finally { setBusy(false) }
   }
-  return <main className="study-page"><header className="study-heading"><h1>Hồ sơ cá nhân</h1><p>Email: {user?.email}</p><p>Múi giờ học: {user?.timeZone} (giờ Việt Nam, UTC+7)</p><small>Múi giờ học được cố định để tính chuỗi ngày nhất quán.</small></header><p><Link className="study-back" to="/progress">Xem tiến độ và chuỗi ngày học →</Link></p><p><Link to="/skills">Luyện và theo dõi bốn kỹ năng →</Link></p><form onSubmit={save}>
+  return <main className="study-page profile-page"><header className="profile-header"><div className="profile-avatar" aria-hidden="true">{user?.displayName.trim().slice(0,1).toLocaleUpperCase('vi')}</div><div><p className="study-eyebrow">TÀI KHOẢN CỦA BẠN</p><h1>{user?.displayName}</h1><p>{user?.email}</p></div><span className="profile-role">Học viên ChinaNN</span></header><div className="profile-grid"><aside className="profile-sidebar"><h2>Góc học tập</h2><Link to="/progress"><strong>Tiến độ học tập ↗</strong><span>Theo dõi kết quả và chuỗi ngày học</span></Link><Link to="/skills"><strong>Luyện bốn kỹ năng ↗</strong><span>Nghe, nói, đọc và viết mỗi ngày</span></Link><div className="profile-timezone"><strong>Giờ Việt Nam · UTC+7</strong><p>Chuỗi ngày học được tính theo múi giờ cố định của bạn.</p></div></aside><div className="profile-content"><section className="profile-details"><h2>Thông tin cá nhân</h2><p>Tên của bạn sẽ xuất hiện trong không gian học tập.</p><form onSubmit={save} aria-busy={busy}>
     <label>Tên hiển thị<input name="displayName" defaultValue={user?.displayName} required maxLength={80} autoComplete="nickname" /></label>
-    <button disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu hồ sơ'}</button>
+    <button className="study-primary" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu thay đổi'}</button>
     {message && <p role="status">{message}</p>}{error && <p role="alert">{error}</p>}
-  </form><AccountSecurityPanel /><ChangePasswordForm /></main>
+  </form></section><AccountSecurityPanel /><ChangePasswordForm /></div></div></main>
 }

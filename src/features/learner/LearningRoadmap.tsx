@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useResource } from '../../shared/hooks/useResource'
 import { useAuth } from '../../app/providers/AuthContext'
+import { LoadingState } from '../../shared/components/LoadingState'
+import { Icon } from '../../shared/components/Icon'
 
 import { nextRoadmapStep } from './roadmap'
 import type { RoadmapStep } from './roadmap'
@@ -16,9 +18,9 @@ export function LearningRoadmap() {
   }, [result.reload])
   return <section className="learner-foundations" aria-label="Lộ trình học toàn diện">
     <h2>Lộ trình của bạn</h2>
-    <p>Pinyin → lời chào → từ vựng chủ đề → 4 kỹ năng. Bạn có thể học theo thứ tự hoặc chọn bài phù hợp.</p>
+    <p>Pinyin → lời chào → từ vựng chủ đề → 4 kỹ năng. Các bài nhập môn mở lần lượt khi bạn hoàn thành bài trước.</p>
     {!user && <p>Đăng nhập để theo dõi bài đang học và bài hoàn thành.</p>}
-    {result.loading && <p role="status">Đang tải lộ trình…</p>}
+    {result.loading && <LoadingState label="Đang tải lộ trình…" compact />}
     {result.error && <p role="alert">{result.error} <button onClick={result.reload}>Thử lại</button></p>}
     {result.data && <RoadmapContent steps={result.data} signedIn={!!user} />}
   </section>
@@ -31,16 +33,16 @@ export function RoadmapContent({ steps, signedIn }: { steps: RoadmapStep[]; sign
   return <>
     {signedIn && <p>Đã hoàn thành {completed}/{steps.length} bài trong lộ trình hiện tại.</p>}
     {next && <p><Link className="study-primary" to={next.path}>{next.status === 'STARTED' ? 'Tiếp tục bài đang học' : 'Gợi ý tiếp theo'}: {next.title} →</Link></p>}
-    {!next && signedIn && <p role="status">Bạn đã hoàn thành tất cả bài trong lộ trình hiện tại. Chọn một bài bên dưới để ôn lại.</p>}
+    {completed === steps.length && signedIn && <p role="status">Bạn đã hoàn thành tất cả bài trong lộ trình hiện tại. Chọn một bài bên dưới để ôn lại.</p>}
     {stages.map((stage, index) => {
       const items = steps.filter(step => step.stage === stage)
       const done = items.filter(step => step.status === 'COMPLETED').length
-      return <details key={stage} open={next?.stage === stage}>
+      return <details className="roadmap-stage" key={stage} open={next?.stage === stage}>
         <summary>{index + 1}. {stage} · {signedIn ? `${done}/${items.length} bài hoàn thành` : `${items.length} bài`}</summary>
         {!items.length && <p>Nội dung chặng này đang được chuẩn bị.</p>}
         <ol>{items.map((step, itemIndex) => <li key={`${step.path}:${itemIndex}`}>
-          <Link to={step.path}>{step.title}</Link>
-          {signedIn && <> — {step.status === 'COMPLETED' ? 'Đã hoàn thành' : step.status === 'STARTED' ? 'Đang học' : 'Chưa bắt đầu'}</>}
+          {step.status === 'LOCKED' ? <span className="roadmap-locked" aria-disabled="true"><Icon name="lock" width="15" height="15" />{step.title}</span> : <Link to={step.path}>{step.title}</Link>}
+          {(signedIn || step.status === 'LOCKED') && <small className={`roadmap-status ${step.status.toLowerCase()}`}>{step.status === 'LOCKED' ? 'Hoàn thành bài trước để mở' : step.status === 'COMPLETED' ? 'Đã hoàn thành' : step.status === 'STARTED' ? 'Đang học' : 'Sẵn sàng học'}</small>}
         </li>)}</ol>
       </details>
     })}

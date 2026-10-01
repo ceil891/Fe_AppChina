@@ -9,5 +9,5 @@ export interface ProgressData {
   totalLessons: number
   flashcards: { saved: number; due: number; reviewed: number; nextDueAt: string | null }
   todayActivity: StudyDay; calendar: StudyDay[]; recentActivities: Activity[]
-  nextAction: { kind: 'LESSON' | 'QUIZ' | 'FLASHCARDS'; label: string; description: string; path: string }
+  nextAction: { kind: 'LESSON' | 'QUIZ' | 'FLASHCARDS' | 'FOUNDATION'; label: string; description: string; path: string }
 }

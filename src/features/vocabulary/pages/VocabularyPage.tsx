@@ -1,3 +1,4 @@
+import { LoadingState } from '../../../shared/components/LoadingState'
 import { useSearchParams } from 'react-router-dom'
 import { useResource } from '../../../shared/hooks/useResource'
 import type { LessonSummary } from '../../lesson/types/lesson.types'
@@ -31,7 +32,7 @@ export function VocabularyPage() {
       lessons={lessons.data ?? []} loadingLessons={lessons.loading} onSearch={submit} />
     <p className="study-hint">Có thể nhập pinyin không dấu, ví dụ “xue” hoặc “ni hao”. Dùng “v” cho âm “ü”.</p>
     {lessons.error && <p role="alert">Chưa tải được bộ lọc bài học. <button onClick={lessons.reload}>Thử lại</button></p>}
-    {result.loading ? <p role="status">Đang tìm từ vựng…</p> : result.error ? <div className="study-error" role="alert"><p>{result.error}</p><button onClick={result.reload}>Thử lại</button><button onClick={() => setParams({})}>Xóa bộ lọc</button></div> : result.data && <>
+    {result.loading ? <LoadingState label="Đang tìm từ vựng…" /> : result.error ? <div className="study-error" role="alert"><p>{result.error}</p><button onClick={result.reload}>Thử lại</button><button onClick={() => setParams({})}>Xóa bộ lọc</button></div> : result.data && <>
       <p role="status" className="study-count">{result.data.total} từ phù hợp{query && ` với “${query}”`}</p>
       <div className="study-grid">{result.data.items.map(word => <WordCard key={word.id} word={word} />)}</div>
       {result.data.items.length === 0 && <div className="study-empty"><h2>Chưa tìm thấy từ phù hợp</h2><p>Thử một từ khóa ngắn hơn hoặc chọn tất cả bài học.</p><button onClick={() => setParams({})}>Xem tất cả từ</button></div>}

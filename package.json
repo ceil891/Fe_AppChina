@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "test:roles": "node scripts/verify-role-navigation.mjs",
+    "test:api": "node --test scripts/api-requests.test.mjs",
     "preview": "vite preview",
     "dev:phone": "node scripts/phone-dev.mjs"
   },

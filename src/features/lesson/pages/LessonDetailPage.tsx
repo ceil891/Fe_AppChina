@@ -1,3 +1,4 @@
+import { LoadingState } from '../../../shared/components/LoadingState'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useResource } from '../../../shared/hooks/useResource'
@@ -54,7 +55,7 @@ function LessonContent({ id }: { id: string }) {
   return <main className="study-page"><Link className="study-back" to={inCourse ? '/courses/' + courseId : '/lessons'}>← {inCourse ? course.data?.course.title : 'Tất cả bài học'}</Link>
     {courseId && course.data && !inCourse && lesson && <p>Bài này không thuộc khóa học đã chọn. <Link to={'/lessons/' + lesson.id}>Học bài độc lập →</Link></p>}
     {courseId && course.error && <p role="alert">Không tải được lộ trình khóa học. <button onClick={course.reload}>Thử lại</button></p>}
-    {detail.loading ? <p role="status">Đang tải bài học…</p> : detail.error ? <div role="alert"><p>{detail.error}</p><button onClick={detail.reload}>Thử lại</button></div> : lesson && detail.data && <>
+    {detail.loading ? <LoadingState label="Đang tải bài học…" /> : detail.error ? <div role="alert"><p>{detail.error}</p><button onClick={detail.reload}>Thử lại</button></div> : lesson && detail.data && <>
       <header className="study-heading"><p className="study-eyebrow">BÀI {lesson.position} · {lesson.wordCount} TỪ VỰNG</p><h1>{lesson.title}</h1><p>{lesson.description}</p><p className="lesson-state">{complete ? '✓ Đã hoàn thành' : record ? 'Đang học' : 'Chưa đánh dấu học'}</p>
       {user && !record && !complete && <button disabled={busy || records.loading || !!records.error} onClick={() => void start()}>{busy ? 'Đang lưu…' : 'Lưu vào bài đang học'}</button>}
       <nav className="lesson-sections" aria-label="Nội dung bài học"><a href="#lesson-words">1. Học từ vựng</a><a href="#lesson-practice">2. Luyện & ôn tập</a><a href="#lesson-finish">3. Hoàn thành</a></nav></header>

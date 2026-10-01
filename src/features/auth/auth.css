@@ -752,3 +752,35 @@
     animation:none!important;
   }
 }
+
+
+/* A compact, readable account surface across screen sizes. */
+.auth-page{background:radial-gradient(ellipse at 10% 20%,#faeee6 0,transparent 55%),#faf9f6}
+.auth-page .auth-grid{max-width:1120px;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:64px;padding:36px 32px}
+.auth-page .intro-brand{display:none}
+.auth-page .auth-intro h1{font-size:clamp(34px,4vw,48px);line-height:1.15;letter-spacing:-1.6px}
+.auth-page .intro-description{font-size:15px;color:#6d625c;line-height:1.7}
+.auth-page .intro-eyebrow{font-size:11px;letter-spacing:1.4px;color:#8b5846}
+.auth-page .language-art{margin-top:18px;height:260px;transform:scale(.88);transform-origin:left top}
+.auth-page .intro-benefits{gap:12px;margin-top:0}
+.auth-page .intro-benefits>span{font-size:11px;color:#665d56}
+.auth-page .auth-card{padding:28px 30px;border-radius:24px;border-color:#e9e2dc;box-shadow:0 18px 60px #55352b0c}
+.auth-page .card-welcome-icon{width:40px;height:40px;margin-bottom:16px;border-radius:12px}
+.auth-page .auth-card h2{font-size:26px;letter-spacing:-.7px}
+.auth-page .card-description{font-size:14px;color:#716862;line-height:1.6}
+.auth-page .auth-form{margin-top:24px}
+.auth-page .auth-field{margin-bottom:16px}
+.auth-page .auth-field>label{font-size:13px;color:#463e39;font-weight:600;margin-bottom:7px}
+.auth-page .auth-input-wrap input{height:48px;font-size:15px;background:#fff;border-color:#ddd5ce;border-radius:12px}
+.auth-page .auth-input-wrap input::placeholder{font-size:14px;color:#8b8179}
+.auth-page .field-hint,.auth-page .field-error{font-size:12px;line-height:1.5}
+.auth-page .field-hint{color:#72675f}
+.auth-page .auth-submit{height:48px;margin-top:20px;border-radius:12px;font-size:14px;background:#d94049;box-shadow:0 5px 12px #d940491c}
+.auth-page .auth-submit:disabled{background:#cf8b8f}
+.auth-page .signup-prompt{font-size:13px;margin-top:20px;padding-top:18px;color:#70665e}
+.auth-page .auth-options{justify-content:flex-end}
+.auth-page .text-button{font-size:13px}
+.auth-page .auth-reassurance{font-size:11px;color:#73685f;margin-top:16px}
+.auth-page .auth-footer{font-size:11px;color:#796e64;padding:16px 32px}
+@media(max-width:800px){.auth-page .auth-grid{grid-template-columns:1fr;gap:24px;max-width:520px;padding:24px}.auth-page .auth-intro{text-align:center}.auth-page .intro-eyebrow{justify-content:center;margin-bottom:10px}.auth-page .auth-intro h1{font-size:30px;margin-bottom:10px}.auth-page .auth-intro h1 br{display:none}.auth-page .intro-description{margin:auto;font-size:14px}.auth-page .language-art,.auth-page .intro-benefits{display:none}.auth-page .auth-form-side{max-width:none}.auth-page .auth-footer{justify-content:center}.auth-page .auth-footer>span:not(:first-child){display:none}}
+@media(max-width:480px){.auth-page .auth-grid{padding:20px 16px;gap:20px}.auth-page .auth-card{padding:24px 20px;border-radius:20px}.auth-page .auth-card h2{font-size:24px}.auth-page .auth-input-wrap input{font-size:16px}.auth-page .intro-eyebrow{display:none}.auth-page .auth-intro h1{font-size:27px}.auth-page .card-welcome-icon{display:none}}

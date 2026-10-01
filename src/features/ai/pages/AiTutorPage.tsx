@@ -1,3 +1,4 @@
+import { LoadingState } from '../../../shared/components/LoadingState'
 import { aiModes } from '../modes'
 import type { AiMode } from '../modes'
 import { useEffect, useRef, useState } from 'react'
@@ -38,7 +39,7 @@ function TutorHome() {
     finally { setBusy(false) }
   }
   return <main className="study-page ai-page"><header className="study-heading"><p className="study-eyebrow">HỌC CÙNG GEMINI</p><h1>AI Tutor</h1><p>Một người bạn để hỏi từ, sửa câu và luyện hội thoại tiếng Trung bằng tiếng Việt.</p></header>
-    {status.loading && <p role="status">Đang kiểm tra khả năng sử dụng AI…</p>}
+    {status.loading && <LoadingState label="Đang kiểm tra khả năng sử dụng AI…" />}
     {status.data && <Availability status={status.data} />}
     {status.error && <p role="alert">{status.error} <button onClick={status.reload}>Thử lại</button></p>}
     <section className="ai-start"><div><h2>Bắt đầu một cuộc trò chuyện</h2><p>Chọn mục tiêu và bài để AI hỗ trợ đúng nội dung bạn đang học.</p><label>Cách học với AI<select value={mode} disabled={busy} onChange={e => setMode(e.target.value as AiMode)}>{Object.entries(aiModes).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}</select></label><p>{aiModes[mode].description}</p><label>Bài học<select value={lessonId} disabled={busy || lessons.loading || !!lessons.error} onChange={e => setLessonId(e.target.value)}><option value="">Hỏi đáp tiếng Trung chung</option>{lessons.data?.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}</select></label>
@@ -48,7 +49,7 @@ function TutorHome() {
       {error && <p role="alert">{error}</p>}
     </div><div className="ai-intro" aria-hidden="true"><span lang="zh">你好</span><p>Hiểu từ mới.<br />Tự tin đặt câu.<br />Luyện tập mỗi ngày.</p></div></section>
     <section className="ai-history"><h2>Hội thoại của bạn</h2>
-      {list.loading ? <p role="status">Đang tải hội thoại…</p> : list.error ? <p role="alert">{list.error} <button onClick={list.reload}>Thử lại</button></p> : list.data && <>
+      {list.loading ? <LoadingState label="Đang tải hội thoại…" /> : list.error ? <p role="alert">{list.error} <button onClick={list.reload}>Thử lại</button></p> : list.data && <>
         {!list.data.items.length ? <p>Chưa có hội thoại ở trang này.</p> : <ul>{list.data.items.map(c => <li key={c.id}><Link to={'/ai/conversations/' + c.id}>{c.title}</Link><small>{aiModes[c.mode ?? 'EXPLAIN'].label}</small><time dateTime={c.updatedAt}>{new Date(c.updatedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</time></li>)}</ul>}
         <div className="study-pagination"><button disabled={page === 0} onClick={() => setParams({ page: String(page - 1) })}>← Trang trước</button><span>Trang {page + 1}</span><button disabled={(page + 1) * 10 >= list.data.total} onClick={() => setParams({ page: String(page + 1) })}>Trang sau →</button></div>
       </>}
@@ -107,7 +108,7 @@ function ConversationContent({ id }: { id: string }) {
   }
   const disabled = busy || pending || detail.loading || !!detail.error || !status.data?.available || status.data.remainingToday === 0 || full
   return <main className="study-page ai-page"><Link className="study-back" to="/ai">← Hội thoại của tôi</Link>
-    {detail.loading && <p role="status">Đang tải hội thoại…</p>}
+    {detail.loading && <LoadingState label="Đang tải hội thoại…" />}
     {detail.error && <p role="alert">{detail.error} <button onClick={detail.reload}>Thử lại</button></p>}
     {status.error && <p role="alert">{status.error} <button onClick={status.reload}>Thử lại</button></p>}
     {detail.data && <><header className="study-heading"><p className="study-eyebrow">AI TUTOR · GEMINI</p><h1>{detail.data.conversation.title}</h1><p>{aiModes[detail.data.conversation.mode ?? 'EXPLAIN'].label}</p>

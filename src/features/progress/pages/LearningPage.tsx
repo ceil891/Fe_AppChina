@@ -1,3 +1,4 @@
+import { LoadingState } from '../../../shared/components/LoadingState'
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { learningApi } from '../api/learningApi'
@@ -72,7 +73,7 @@ export function LearningPage() {
     } catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được bài học.') }
     finally { setBusy(false) }
   }
-  if (loading) return <main className="study-page"><p role="status">Đang tải dữ liệu học…</p></main>
+  if (loading) return <main className="study-page"><LoadingState label="Đang tải dữ liệu học…" /></main>
   if (loadError) return <main className="study-page"><p role="alert">{loadError}</p><button onClick={() => { setLoading(true); setLoadError(''); setRetry(r => r + 1) }}>Thử lại</button></main>
   return <main className="study-page"><header className="study-heading"><p className="study-eyebrow">GÓC HỌC TẬP CỦA BẠN</p><h1>Bài học của tôi</h1><p>Tiếp tục bài đang học, ôn lại kiến thức và giữ ghi chú riêng.</p><div className="learning-counts"><span><strong>{records.length - completed}</strong> đang học</span><span><strong>{completed}</strong> đã hoàn thành</span><Link to="/courses">Khám phá khóa học →</Link></div></header>
     <section className="learning-filters" aria-label="Lọc bài đã lưu"><label>Tìm bài đã lưu<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Nhập tên bài học…" /></label><label>Trạng thái<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">Tất cả ({records.length})</option><option value="started">Đang học ({records.length - completed})</option><option value="completed">Đã hoàn thành ({completed})</option></select></label></section>

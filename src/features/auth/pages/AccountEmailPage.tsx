@@ -68,9 +68,9 @@ function AccountEmailForm({ mode, token }: { mode: EmailMode; token: string }) {
         : !token ? <p role="alert">Liên kết thiếu mã xác nhận. Hãy yêu cầu email mới.</p>
           : finished ? null
             : mode === 'reset' ? <>
-              <p id="reset-password-hint">Dùng 12–128 ký tự. Đổi mật khẩu sẽ đăng xuất tất cả phiên và giữ nguyên dữ liệu học.</p>
-              <label>Mật khẩu mới<input name="newPassword" type="password" autoComplete="new-password" aria-describedby="reset-password-hint" required minLength={12} maxLength={128} readOnly={busy} value={password} onChange={event => setPassword(event.target.value)} /></label>
-              <label>Nhập lại mật khẩu mới<input name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={128} readOnly={busy} value={confirm} onChange={event => setConfirm(event.target.value)} /></label>
+              <p id="reset-password-hint">Dùng 8–128 ký tự. Đổi mật khẩu sẽ đăng xuất tất cả phiên và giữ nguyên dữ liệu học.</p>
+              <label>Mật khẩu mới<input name="newPassword" type="password" autoComplete="new-password" aria-describedby="reset-password-hint" required minLength={8} maxLength={128} readOnly={busy} value={password} onChange={event => setPassword(event.target.value)} /></label>
+              <label>Nhập lại mật khẩu mới<input name="confirmPassword" type="password" autoComplete="new-password" required minLength={8} maxLength={128} readOnly={busy} value={confirm} onChange={event => setConfirm(event.target.value)} /></label>
             </> : <p>Bấm xác nhận để xác minh địa chỉ email của bạn.</p>}
       {!finished && <button disabled={disabled}>{busy ? 'Đang xử lý…' : mode === 'forgot' ? 'Gửi hướng dẫn' : 'Xác nhận'}</button>}
       {cooldown.remaining > 0 && <p role="status">Có thể thử lại sau {cooldown.remaining} giây.</p>}

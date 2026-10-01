@@ -1,3 +1,4 @@
+import { LoadingState } from '../../shared/components/LoadingState'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useResource } from '../../shared/hooks/useResource'
@@ -30,7 +31,7 @@ export function SkillsPage() {
     catch (e) { setError(message(e)) } finally { setBusy('') }
   }
   return <main className="study-page skills-page"><header className="study-heading"><p className="study-eyebrow">LUYỆN ĐỀU MỖI NGÀY</p><h1>Bốn kỹ năng của tôi</h1><p>Nghe rõ hơn, nói tự tin hơn, đọc hiểu và viết đúng từng câu.</p><Link to="/skills/history">Lịch sử luyện tập →</Link></header>
-    {stats.loading && <p role="status">Đang tải tiến độ riêng của bạn…</p>}
+    {stats.loading && <LoadingState label="Đang tải tiến độ riêng của bạn…" />}
     {stats.error && <p role="alert">{stats.error} <button onClick={stats.reload}>Tải lại tiến độ</button></p>}
     <section className="skill-grid" aria-label="Tiến độ từng kỹ năng">{skills.map(skill => {
       const stat = stats.data?.find(s => s.skill === skill)
@@ -46,7 +47,7 @@ export function SkillsPage() {
       {selected === 'WRITING' && <p>Luyện nhập Hán tự bằng bàn phím và thứ tự câu. <Link to="/practice#strokes">Mở ô luyện nét chữ Hán →</Link></p>}
       {exerciseId && <p>Đang mở bài được chọn từ lộ trình. <button onClick={() => setFilters({ skill: selected })}>Xem tất cả bài cùng kỹ năng</button></p>}
       {catalogue.data && exerciseId && !catalogue.data.some(e => e.id === exerciseId && e.skill === selected) && <p role="status">Bài luyện này không còn trong danh sách đã xuất bản. Hãy chọn bài khác.</p>}
-      {catalogue.loading && <p role="status">Đang tải bài luyện…</p>}
+      {catalogue.loading && <LoadingState label="Đang tải bài luyện…" />}
       {catalogue.error && <p role="alert">{catalogue.error} <button onClick={catalogue.reload}>Thử lại</button></p>}
       {error && <p role="alert">{error}</p>}
       <div className="skill-lessons">{catalogue.data?.filter(e => e.skill === selected && (!exerciseId || e.id === exerciseId)).map(e => <article key={e.id}><div><h3>{e.title}</h3><p>{e.description}</p><small>{e.questionCount} câu · {selected === 'SPEAKING' ? 'Tự đánh giá' : 'Chấm theo đáp án'}</small></div><button disabled={!!busy} onClick={() => void start(e.id)}>{busy === e.id ? 'Đang mở…' : 'Bắt đầu →'}</button></article>)}</div>
@@ -58,7 +59,7 @@ export function SkillAttemptPage() {
   const { id } = useParams()
   const result = useResource<Attempt>(`/skills/attempts/${id}`)
   return <main className="study-page skills-page"><Link className="study-back" to="/skills">← Bốn kỹ năng</Link>
-    {result.loading ? <p role="status">Đang tải lượt luyện…</p> : result.error ? <p role="alert">{result.error} <button onClick={result.reload}>Thử lại</button></p> : result.data && <Practice key={result.data.summary.id} initial={result.data} />}
+    {result.loading ? <LoadingState label="Đang tải lượt luyện…" /> : result.error ? <p role="alert">{result.error} <button onClick={result.reload}>Thử lại</button></p> : result.data && <Practice key={result.data.summary.id} initial={result.data} />}
   </main>
 }
 
@@ -154,7 +155,7 @@ export function SkillHistoryPage() {
   const result = useResource<History>(`/skills/attempts?${new URLSearchParams({ skill, page: String(page), size: '20' })}`)
   return <main className="study-page skills-page"><Link className="study-back" to="/skills">← Bốn kỹ năng</Link><header className="study-heading"><h1>Lịch sử luyện kỹ năng</h1><p>Kết quả và lượt chưa nộp của riêng bạn · Giờ Việt Nam.</p></header>
     <label>Lọc kỹ năng<select value={skill} onChange={e => setParams(e.target.value ? { skill: e.target.value } : {})}><option value="">Tất cả kỹ năng</option>{skills.map(s => <option value={s} key={s}>{skillNames[s]}</option>)}</select></label>
-    {result.loading ? <p role="status">Đang tải…</p> : result.error ? <p role="alert">{result.error} <button onClick={result.reload}>Thử lại</button></p> : result.data && <>
+    {result.loading ? <LoadingState label="Đang tải…" /> : result.error ? <p role="alert">{result.error} <button onClick={result.reload}>Thử lại</button></p> : result.data && <>
       {result.data.items.length === 0 ? <p className="study-empty">Chưa có lượt luyện phù hợp. Chọn một bài để bắt đầu.</p> : <ol className="skill-history">{result.data.items.map(item => <li key={item.id}><div><small>{skillNames[item.skill]} · {dateLabel(item.createdAt)}</small><h2>{item.title}</h2><p>{!item.submittedAt ? 'Chưa nộp bài' : item.skill === 'SPEAKING' ? 'Đã luyện · tự đánh giá' : `${item.score}/100 điểm`}</p></div><Link to={'/skills/attempts/' + item.id}>{item.submittedAt ? 'Xem kết quả' : 'Tiếp tục'}</Link></li>)}</ol>}
       <div className="study-pagination"><button disabled={page === 0} onClick={() => setParams({ skill, page: String(page - 1) })}>← Trang trước</button><span>Trang {page + 1} / {Math.max(1, Math.ceil(result.data.total / 20))}</span><button disabled={(page + 1) * 20 >= result.data.total} onClick={() => setParams({ skill, page: String(page + 1) })}>Trang sau →</button></div>
     </>}

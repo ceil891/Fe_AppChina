@@ -22,7 +22,7 @@ export function ChangePasswordForm() {
     event.preventDefault()
     if (disabled) return
     const errors: Record<string, string> = {}
-    if (values.newPassword.length < 12 || values.newPassword.length > 128) errors.newPassword = 'Mật khẩu mới cần 12–128 ký tự.'
+    if (values.newPassword.length < 8 || values.newPassword.length > 128) errors.newPassword = 'Mật khẩu mới cần 8–128 ký tự.'
     else if (values.newPassword === values.currentPassword) errors.newPassword = 'Mật khẩu mới phải khác mật khẩu hiện tại.'
     if (values.confirmPassword !== values.newPassword) errors.confirmPassword = 'Mật khẩu xác nhận chưa khớp.'
     setFields(errors); setError('')
@@ -58,7 +58,7 @@ export function ChangePasswordForm() {
           onChange={event => { setValues(previous => ({ ...previous, [input.name]: event.target.value })); setFields(previous => ({ ...previous, [input.name]: '' })) }} />
         {fields[input.name] && <p className="field-error" id={`change-${input.name}-error`}>{fields[input.name]}</p>}
       </div>)}
-      <p className="field-hint" id="new-password-hint">Dùng 12–128 ký tự và khác mật khẩu hiện tại.</p>
+      <p className="field-hint" id="new-password-hint">Dùng 8–128 ký tự và khác mật khẩu hiện tại.</p>
       {error && <div className="auth-alert" role="alert">{error}</div>}
       {cooldown.remaining > 0 && <p className="field-hint">Có thể thử lại sau {cooldown.remaining} giây.</p>}
       <button className="auth-submit" disabled={disabled}>{busy ? 'Đang đổi mật khẩu…' : 'Đổi mật khẩu và đăng nhập lại'}</button>

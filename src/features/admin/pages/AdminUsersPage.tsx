@@ -72,7 +72,7 @@ function UserForm({account,passwordOnly}:{account?:ManagedUser;passwordOnly:bool
     const form=new FormData(event.currentTarget)
     const password=String(form.get('password') ?? ''), displayName=String(form.get('displayName') ?? '').trim()
     if(!passwordOnly && !displayName){setError('Tên hiển thị không được để trống.');return}
-    if((passwordOnly || !account) && (password.length<12 || password.length>128 || !password.trim())){setError('Mật khẩu cần 12–128 ký tự.');return}
+    if((passwordOnly || !account) && (password.length<8 || password.length>128 || !password.trim())){setError('Mật khẩu cần 8–128 ký tự.');return}
     setBusy(true)
     try {
       if(passwordOnly && account) {
@@ -97,8 +97,8 @@ function UserForm({account,passwordOnly}:{account?:ManagedUser;passwordOnly:bool
       <p className="admin-muted">Vai trò quyết định menu và các thao tác được phép. Đổi vai trò hoặc trạng thái sẽ thu hồi các phiên hiện tại.</p>
       {self && <p className="admin-muted">Bạn không thể tự đổi vai trò hoặc khóa tài khoản đang dùng.</p>}
     </>}
-    {(!account || passwordOnly) && <><label htmlFor="managed-password">{passwordOnly?'Mật khẩu mới':'Mật khẩu ban đầu'}</label><PasswordInput id="managed-password" name="password" minLength={12} maxLength={128} required autoComplete="new-password" disabled={busy}/><p className="admin-muted">12–128 ký tự. Mật khẩu không được hiển thị lại sau khi lưu.</p></>}
-    {passwordOnly && <><label htmlFor="managed-confirmation">Nhập lại mật khẩu mới</label><PasswordInput id="managed-confirmation" name="confirmation" minLength={12} maxLength={128} required autoComplete="new-password" disabled={busy}/><p className="admin-muted">Tất cả phiên cũ mất hiệu lực. Nếu đây là tài khoản của bạn, bạn sẽ cần đăng nhập lại.</p></>}
+    {(!account || passwordOnly) && <><label htmlFor="managed-password">{passwordOnly?'Mật khẩu mới':'Mật khẩu ban đầu'}</label><PasswordInput id="managed-password" name="password" minLength={8} maxLength={128} required autoComplete="new-password" disabled={busy}/><p className="admin-muted">8–128 ký tự. Mật khẩu không được hiển thị lại sau khi lưu.</p></>}
+    {passwordOnly && <><label htmlFor="managed-confirmation">Nhập lại mật khẩu mới</label><PasswordInput id="managed-confirmation" name="confirmation" minLength={8} maxLength={128} required autoComplete="new-password" disabled={busy}/><p className="admin-muted">Tất cả phiên cũ mất hiệu lực. Nếu đây là tài khoản của bạn, bạn sẽ cần đăng nhập lại.</p></>}
     {error && <p role="alert">{error}</p>}<div className="admin-actions"><button className="admin-primary">{busy?'Đang lưu…':passwordOnly?'Đặt lại mật khẩu':'Lưu tài khoản'}</button><button type="button" onClick={()=>navigate('/admin/users')}>Hủy</button></div>
   </fieldset></form>{roles.error && <button onClick={roles.reload}>Tải lại vai trò</button>}</section></div>
 }

@@ -28,7 +28,7 @@ export function AdminCourseEditorPage() {
   const { user } = useAuth()
   const result = useResource<CourseDetail>(id ? '/admin/courses/' + encodeURIComponent(id) : null)
   const lessons = useResource<LessonSummary[]>(can(user, 'lessons.read') ? '/admin/lessons' : null)
-  return <main className="admin-page"><Link to="/admin/courses">← Danh sách khóa học</Link><h1>{id ? 'Chi tiết khóa học' : 'Tạo khóa học'}</h1>
+  return <main className="admin-page course-editor-page"><Link className="course-back" to="/admin/courses">← Danh sách khóa học</Link><header className="course-editor-heading"><p className="admin-eyebrow">THIẾT KẾ LỘ TRÌNH HỌC</p><h1>{id ? 'Chi tiết khóa học' : 'Tạo khóa học mới'}</h1><p>Sắp xếp từng bài học thành một hành trình rõ ràng cho học viên.</p></header>
     {result.loading || lessons.loading ? <p role="status">Đang tải…</p> : result.error || lessons.error ? <p role="alert">{result.error || lessons.error}</p> : <CourseForm key={`${id ?? 'new'}-${result.data?.course.version}`} detail={result.data} lessons={lessons.data ?? []} />}
     <button onClick={() => { result.reload(); lessons.reload() }}>Tải lại dữ liệu</button>
   </main>
@@ -50,13 +50,13 @@ function CourseForm({ detail, lessons }: { detail?: CourseDetail; lessons: Lesso
     })
   }
   function move(index: number, direction: number) { setDirty(true); setIds(old => { const next = [...old]; [next[index], next[index + direction]] = [next[index + direction], next[index]]; return next }) }
-  return <section className="management-form"><p>{current?.course.published ? 'Đã xuất bản. Ẩn khóa học trước khi sửa.' : 'Bản nháp / đang ẩn. Lưu nội dung trước khi xuất bản.'}</p>
+  return <section className="management-form course-form"><div className="course-status"><span>{ids.length} bài học</span><p>{current?.course.published ? 'Đã xuất bản. Ẩn khóa học trước khi sửa.' : 'Bản nháp · Chỉ hiển thị với học viên sau khi xuất bản.'}</p></div>
     <div className="admin-editor"><form onSubmit={save} onChange={() => setDirty(true)}><fieldset disabled={busy || !editable}>
-      <label>Tên khóa học<input name="title" required maxLength={120} defaultValue={detail?.course.title ?? ''} /></label>
+      <h2>01. Thông tin khóa học</h2><p className="course-help">Đặt tên dễ hiểu và mô tả những gì học viên sẽ học được.</p><label>Tên khóa học<input placeholder="Ví dụ: Tiếng Trung giao tiếp cơ bản" name="title" required maxLength={120} defaultValue={detail?.course.title ?? ''} /></label>
       <label>Mô tả<textarea name="description" maxLength={2000} defaultValue={detail?.course.description ?? ''} /></label>
-      <label>Chọn bài học<select value={choice} onChange={e => setChoice(e.target.value)}><option value="">Chọn bài để thêm</option>{lessons.filter(l => !ids.includes(l.id)).map(l => <option key={l.id} value={l.id}>{l.title}{l.published === false ? ' (đã ẩn)' : ''}</option>)}</select></label>
+      <h2>02. Lộ trình bài học</h2><p className="course-help">Thêm bài và sắp xếp theo thứ tự học. Tối đa 100 bài mỗi khóa.</p><label>Chọn bài học<select value={choice} onChange={e => setChoice(e.target.value)}><option value="">Chọn bài để thêm</option>{lessons.filter(l => !ids.includes(l.id)).map(l => <option key={l.id} value={l.id}>{l.title}{l.published === false ? ' (đã ẩn)' : ''}</option>)}</select></label>
       <button type="button" disabled={!choice || ids.length >= 100} onClick={() => { setDirty(true); setIds([...ids, Number(choice)]); setChoice('') }}>Thêm vào khóa</button>
-      <ol>{ids.map((id, index) => <li key={id}><p>{lessons.find(l => l.id === id)?.title ?? current?.lessons.find(l => l.id === id)?.title ?? `Bài ${id}`}</p><div className="management-actions"><button type="button" aria-label={`Đưa bài ${index + 1} lên`} disabled={index === 0} onClick={() => move(index, -1)}>↑ Lên</button><button type="button" aria-label={`Đưa bài ${index + 1} xuống`} disabled={index === ids.length - 1} onClick={() => move(index, 1)}>↓ Xuống</button><button type="button" onClick={() => { setDirty(true); setIds(ids.filter(value => value !== id)) }}>Gỡ khỏi khóa</button></div></li>)}</ol>
+      {ids.length === 0 && <div className="course-empty"><strong>Khóa học chưa có bài nào</strong><p>Chọn một bài ở trên rồi bấm “Thêm vào khóa” để bắt đầu.</p></div>}<ol className="course-lesson-list">{ids.map((id, index) => <li key={id}><p>{lessons.find(l => l.id === id)?.title ?? current?.lessons.find(l => l.id === id)?.title ?? `Bài ${id}`}</p><div className="management-actions"><button type="button" aria-label={`Đưa bài ${index + 1} lên`} disabled={index === 0} onClick={() => move(index, -1)}>↑ Lên</button><button type="button" aria-label={`Đưa bài ${index + 1} xuống`} disabled={index === ids.length - 1} onClick={() => move(index, 1)}>↓ Xuống</button><button type="button" onClick={() => { setDirty(true); setIds(ids.filter(value => value !== id)) }}>Gỡ khỏi khóa</button></div></li>)}</ol>
       <button type="submit" className="admin-primary">{busy ? 'Đang lưu…' : 'Lưu khóa học'}</button>
     </fieldset></form></div>
     {dirty && <p role="status">Có thay đổi chưa lưu. Lưu khóa học trước khi xuất bản.</p>}
