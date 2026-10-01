@@ -1,0 +1,4 @@
+.session-retry { box-sizing: border-box; width: min(100%, 560px); margin: 32px auto; padding: 28px; border: 1px solid #e3e7dd; border-radius: 18px; background: #fff; color: #343a32; }
+.session-retry h2 { margin: 0 0 10px; font-size: 22px; }
+.session-retry p[role="alert"] { color: #72776a; font-size: 14px; }
+.session-retry button { margin-top: 18px; border: 0; border-radius: 10px; background: #b32e35; color: #fff; padding: 11px 20px; font: inherit; }

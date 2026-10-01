@@ -3,15 +3,17 @@ import { useAuth } from '../providers/AuthContext'
 import { useResource } from '../../shared/hooks/useResource'
 import { Icon } from '../../shared/components/Icon'
 import { LoadingState } from '../../shared/components/LoadingState'
+import { SessionRetry } from '../../shared/components/SessionRetry'
 import { foundationAccess } from '../../features/foundations/access'
 import { foundationPath } from '../../features/foundations/types'
 import type { FoundationCard } from '../../features/foundations/types'
 import '../../shared/styles/study.css'
 
 export function RequireFoundation() {
-  const { user, checking } = useAuth()
+  const { user, checking, error } = useAuth()
   const lessons = useResource<FoundationCard[]>(checking ? null : '/foundations')
   if (checking || lessons.loading) return <main className="study-page" data-route-loading><LoadingState label="Đang tải nội dung…" /></main>
+  if (!user && error) return <main className="study-page"><SessionRetry /></main>
   if (lessons.error) return <main className="study-page"><div className="study-error" role="alert"><h1>Chưa tải được tiến độ Pinyin</h1><p>{lessons.error}</p><button onClick={lessons.reload}>Thử lại</button></div></main>
   if (user && foundationAccess(lessons.data).unlocked) return <Outlet />
   return <FoundationGate lessons={lessons.data ?? []} signedIn={!!user} />

@@ -63,7 +63,7 @@ const SkillHistoryPage = lazy(() => import('../features/skills/SkillsPage').then
 const AdminLearnerSkillsPage = lazy(() => import('../features/admin/pages/AdminLearnerSkillsPage').then(module => ({ default: module.AdminLearnerSkillsPage })))
 
 function AppRoutes() {
-  const { user, error, refresh, logout } = useAuth()
+  const { user, logout } = useAuth()
   const [logoutError, setLogoutError] = useState('')
   const [busy, setBusy] = useState(false)
   const navigate = useNavigate()
@@ -74,7 +74,6 @@ function AppRoutes() {
     finally { setBusy(false) }
   }
   return <>
-    {error && <aside role="alert"><p>{error}</p><button onClick={() => void refresh()}>Thử lại</button></aside>}
     <RouteAccessibility />
     <Suspense fallback={<main data-route-loading><LoadingState label="Đang mở trang…" /></main>}><Routes>
       <Route path="/account/forgot" element={<AccountEmailPage key="forgot" mode="forgot" />} /><Route path="/account/reset" element={<AccountEmailPage key="reset" mode="reset" />} /><Route path="/account/verify" element={<AccountEmailPage key="verify" mode="verify" />} />

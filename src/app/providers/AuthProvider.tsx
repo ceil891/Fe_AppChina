@@ -7,17 +7,21 @@ import type { Profile } from '../../features/auth/types/auth.types'
 import { ApiError } from '../../services/api'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<Profile | null>(null)
+  const [user, updateUser] = useState<Profile | null>(null)
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
   const [sessionExpired, setSessionExpired] = useState(false)
+  const setUser = useCallback((profile: Profile | null) => {
+    updateUser(profile)
+    setError('')
+  }, [])
   const refresh = useCallback(async () => {
     try { setUser(await authApi.me()); setError('') }
     catch (e) {
       if (e instanceof ApiError && e.status === 401) { setUser(null); setError('') }
       else setError('Chưa kiểm tra được phiên đăng nhập. Hãy thử lại.')
     } finally { setChecking(false) }
-  }, [])
+  }, [setUser])
   useEffect(() => {
     // Read the server session after every page load; never trust localStorage for identity.
     let active = true
@@ -30,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const expired = () => { setUser(null); setSessionExpired(true) }
     window.addEventListener('auth-expired', expired)
     return () => { active = false; window.removeEventListener('auth-expired', expired) }
-  }, [])
+  }, [setUser])
   const logout = async () => {
     await authApi.logout()
     clearNoteDrafts()
