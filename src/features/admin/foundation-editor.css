@@ -1,0 +1,28 @@
+.foundation-management { max-width:1100px; }
+.foundation-management header { margin-bottom:28px; }
+.foundation-management a { color:#9e3541; }
+.foundation-management button,.foundation-management .study-primary { border:1px solid #d5ccc3; border-radius:8px; padding:10px 16px; background:#fff; color:#553f35; font:inherit; font-size:14px; }
+.foundation-management .study-primary { display:inline-block; background:#b23842; color:white; text-decoration:none; }
+.foundation-management button:disabled { cursor:not-allowed; }
+.foundation-admin-list { display:grid; gap:16px; }
+.foundation-admin-list article { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:24px; background:white; border:1px solid #e6ddd5; border-radius:12px; }
+.foundation-admin-list small { color:#816b5f; }
+.foundation-admin-list h2 { font-size:20px; }
+.foundation-editor { max-width:none; }
+.foundation-editor fieldset { margin:24px 0; border:1px solid #ddd3c9; border-radius:12px; padding:20px; min-width:0; }
+.foundation-editor legend { font-size:19px; font-weight:650; padding:0 8px; }
+.foundation-editor label { font-size:14px; }
+.foundation-editor input,.foundation-editor textarea,.foundation-editor select { box-sizing:border-box; width:100%; min-width:0; border:1px solid #cfc3b9; background:white; padding:10px; border-radius:8px; }
+.foundation-editor textarea { min-height:110px; }
+.foundation-editor-columns { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.foundation-editor .foundation-editor-checkbox { flex-direction:row; align-items:center; }
+.foundation-editor-checkbox input { width:auto; }
+.foundation-editor-item { border-bottom:1px solid #e6ddd5; padding:12px 0 24px; margin-bottom:20px; }
+.foundation-editor-actions,.foundation-editor-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:16px 0; }
+.foundation-editor audio { display:block; width:100%; max-width:400px; margin:16px 0; }
+.foundation-editor-preview { padding:24px; background:#fff8ef; border:1px solid #dfd6c8; border-radius:12px; overflow-wrap:anywhere; }
+.foundation-management [role=alert] { padding:14px; background:#fff0ed; }
+.foundation-status { color:#356345 !important; font-weight:600; }
+.foundation-saved-result { padding:24px; border:1px solid #e5ddd5; background:white; border-radius:12px; }
+.foundation-saved-result summary { cursor:pointer; font-weight:650; }
+@media(max-width:650px) { .foundation-editor-columns { grid-template-columns:1fr; } .foundation-admin-list article { align-items:start; flex-direction:column; } .foundation-editor fieldset { padding:14px; } }

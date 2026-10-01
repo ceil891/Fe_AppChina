@@ -1,0 +1,44 @@
+.management-back { display: inline-block; color: #b84148; font-size: 13px; margin-bottom: 24px; }
+.admin-heading > div { min-width: 0; overflow-wrap: anywhere; }
+.admin-delete strong { overflow-wrap: anywhere; }
+.permission-groups { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin: 20px 0; }
+.permission-group { background: #fff; padding: 18px; border: 1px solid #eadcd0; border-radius: 12px; }
+.permission-group h3 { font-size: 16px; margin: 0 0 16px; }
+.admin-editor .permission-choice { display: flex; flex-direction: row; align-items: start; gap: 10px; font-weight: 400; }
+.management-form .permission-choice input { width: 18px; height: 18px; flex-shrink: 0; accent-color: #c4444c; margin: 3px 0; }
+.permission-choice span { min-width: 0; overflow-wrap: anywhere; }
+.permission-choice small { display: block; color: #8c7868; font-size: 10px; }
+@media(max-width:600px) { .permission-groups { grid-template-columns: 1fr; } }
+.management-table { border: 1px solid #e5d8cc; border-radius: 14px; overflow: hidden; background: #fffdfa; margin-top: 16px; }
+.management-table table { border-collapse: collapse; width: 100%; text-align: left; table-layout: auto; font-size: 13px; }
+.management-table th { background: #f7eee6; color: #997966; font-size: 11px; padding: 14px 18px; font-weight: 650; }
+.management-table td { border-top: 1px solid #eee3d8; padding: 18px; vertical-align: middle; overflow-wrap: anywhere; }
+.management-table td:nth-child(2) { max-width: 400px; }
+.management-table td small { display: block; color: #9a8070; font-size: 11px; margin-top: 5px; }
+.management-title { color: #784d3d; font-weight: 650; }
+.management-title:hover { color: #c23846; text-decoration: underline; }
+.management-actions { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; min-width: 145px; }
+.management-actions a, .admin-shell .management-actions button { font-size: 12px; color: #805745; border: 1px solid #e1d0c1; border-radius: 8px; padding: 7px 11px; background: #fffaf5; }
+.management-actions a:hover { background: #fcebe1; }
+.admin-shell .management-actions .admin-delete-button { color: #b6303e; }
+.management-form { max-width: 820px; margin: 0 auto; }
+.management-form .admin-editor { padding: 30px; }
+.management-form .admin-editor form { margin: 0; }
+.management-form .admin-editor input, .management-form .admin-editor select, .management-form .admin-editor textarea { width: 100%; }
+.management-form select { border: 1px solid #dfd4ca; border-radius: 9px; padding: 10px; font: inherit; background: white; }
+.management-cancel { padding: 10px 14px; border: 1px solid #e1d0c1; border-radius: 10px; color: #805745; font-size: 13px; }
+.management-form .auth-input-wrap { position: relative; margin-bottom: 18px; }
+.management-form .auth-input-wrap > input { padding: 12px 42px !important; }
+.management-form .input-icon { position: absolute; left: 12px; top: 14px; color: #ac8d78; pointer-events: none; }
+.admin-shell .management-form .password-toggle { position: absolute; right: 4px; top: 4px; width: 38px; height: 38px; display: grid; place-items: center; border: 0; padding: 8px; background: transparent; }
+.management-account-email { overflow-wrap: anywhere; font-weight: 650; margin-bottom: 24px; }
+.management-form .admin-editor .management-toggle { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 10px; }
+.management-form .admin-editor .management-toggle input { width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
+.management-word-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.management-word-preview { border: 1px solid #e7d8cb; border-radius: 14px; background: #fffaf4; padding: 24px; overflow-wrap: anywhere; }
+.management-word-preview h2 { font-size: 26px; margin: 10px 0; }
+.management-word-preview h2 span { font-size: 15px; color: #bc7460; font-weight: 400; }
+.management-word-preview p { font-size: 14px; }
+.management-word-preview small { color: #ac8d78; font-size: 10px; }
+@media(max-width:1100px) { .management-table th,.management-table td { padding: 14px 12px; } .management-actions { min-width: 105px; } }
+@media(max-width:700px) { .management-table table,.management-table tbody,.management-table tr,.management-table td { display: block; width: 100%; max-width: none; } .management-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .management-table tr { border-bottom: 1px solid #e7d5c6; padding: 14px; } .management-table td { border: 0; padding: 7px 0; } .management-table td::before { content: attr(data-label); display: block; color: #af8b72; font-size: 10px; margin-bottom: 5px; } .management-table td:nth-child(2) { max-width: none; } .management-form .admin-editor { padding: 22px; } .management-word-grid { grid-template-columns: 1fr; } }

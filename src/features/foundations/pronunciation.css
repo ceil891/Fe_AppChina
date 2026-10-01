@@ -1,0 +1,10 @@
+.pronunciation-practice { margin-top: 2.5rem; scroll-margin-top: 6rem; }
+.pronunciation-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.pronunciation-panel { padding: 1.25rem; border: 1px solid #dfded5; border-radius: 18px; background: #fffefa; margin: 1rem 0; min-width: 0; }
+.pronunciation-panel h3,.pronunciation-panel h4 { margin-top: 0; }
+.pronunciation-panel audio { max-width: 100%; }
+.pronunciation-panel fieldset { display: grid; gap: .7rem; margin: 1rem 0; border: 1px solid #dfded5; border-radius: 10px; }
+.pronunciation-panel button,.pronunciation-panel select { padding: .65rem .85rem; border: 1px solid #cccbbf; border-radius: 9px; background: #fff; color: #253e35; max-width: 100%; }
+.pronunciation-panel button:disabled { opacity: .55; }
+.pronunciation-panel button:not(:disabled) { cursor: pointer; }
+@media(max-width:640px) { .pronunciation-grid { grid-template-columns: 1fr; } }

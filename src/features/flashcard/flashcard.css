@@ -1,0 +1,46 @@
+.flash-page { max-width: 1000px; }
+.flash-page *, .flash-save *, .flash-save-lesson * { box-sizing: border-box; }
+.flash-links, .flash-start, .flash-save { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin: 22px 0; }
+.flash-links a, .flash-start > a:not(.study-primary), .flash-save a { color: #b43742; font-size: 14px; }
+.flash-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin: 26px 0; }
+.flash-stats > div { padding: 24px; background: #fff8f1; border: 1px solid #efded0; border-radius: 16px; }
+.flash-stats strong { display: block; font-size: 32px; color: #b63b44; }
+.flash-stats span { font-size: 13px; color: #7b685d; }
+.flash-filters { display: flex; flex-wrap: wrap; gap: 14px; margin: 25px 0; }
+.flash-filters label { flex: 1; min-width: 160px; font-size: 13px; }
+.flash-filters input, .flash-filters select { width: 100%; min-width: 0; border-color: #e4d5c9; background: #fff; border-radius: 10px; }
+.flash-collection { display: grid; gap: 12px; }
+.flash-list-card, .flash-history-row { border: 1px solid #e9d9cc; border-radius: 14px; padding: 20px 24px; background: #fffcf8; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.flash-list-card > div, .flash-history-row > div { min-width: 0; overflow-wrap: anywhere; }
+.flash-word { font-size: 29px; text-decoration: none; color: #49352d; }
+.flash-collection small { display: block; color: #82736a; font-size: 12px; }
+.flash-list-card button { flex-shrink: 0; }
+.flash-page button, .flash-save button, .flash-save-lesson button { border: 1px solid #dbb9aa; border-radius: 10px; padding: 11px 16px; color: #8f413c; background: white; font: inherit; font-size: 14px; }
+.flash-page button:hover:not(:disabled), .flash-save button:hover:not(:disabled) { background: #fff0e8; }
+.flash-page .study-primary, .flash-save .study-primary, .flash-save-lesson .study-primary { background: #d9474e; color: white; border-color: #d9474e; }
+.flash-page .study-primary:hover:not(:disabled), .flash-save .study-primary:hover:not(:disabled) { background: #bb323e; }
+.flash-page :focus-visible, .flash-save :focus-visible, .flash-save-lesson :focus-visible { outline: 3px solid #ba3d49; outline-offset: 4px; }
+.flash-notice { padding: 16px 20px; background: #fdf0e5; border: 1px solid #ecd5c3; border-radius: 12px; overflow-wrap: anywhere; }
+.flash-notice button { margin-right: 10px; }
+.flash-review-card { max-width: 660px; margin: 20px auto; padding: 40px; background: #fffcf8; border: 1px solid #edd9c9; border-radius: 20px; text-align: center; box-shadow: 0 12px 35px #66321e08; overflow-wrap: anywhere; }
+.flash-review-card > h2[lang=zh] { font-size: clamp(44px, 8vw, 68px); line-height: 1.4; font-weight: 500; margin: 24px 0; }
+.flash-review-card > a { display: inline-block; margin: 16px; color: #b43742; }
+.flash-prompt { color: #8a7668; margin-bottom: 30px; }
+.flash-meaning { font-size: 23px; color: #674538; }
+.flash-example { text-align: left; border-radius: 12px; padding: 18px 22px; margin: 25px 0; background: #f8eee3; font-size: 14px; }
+.flash-example p:first-child { font-size: 22px; }
+.flash-rating { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.flash-rating button { min-height: 76px; font-size: 17px; }
+.flash-rating small { display: block; margin-top: 4px; font-size: 12px; }
+.flash-queue-count { text-align: center; color: #9b6a53; font-size: 14px; }
+.flash-error { background: #fff0ee; padding: 16px; border-radius: 12px; font-size: 13px; }
+.flash-error button { margin: 6px; }
+.flash-history-row strong { display: block; font-size: 25px; font-weight: 500; }
+.flash-history-row span { font-size: 14px; }
+.flash-rating-label { white-space: nowrap; padding: 6px 12px; border-radius: 8px; background: #fff0d9; color: #906030; }
+.flash-rating-label.remember { background: #edf5ed; color: #396445; }
+.flash-save-lesson { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; background: #fff2e7; border: 1px solid #f1d7c7; border-radius: 16px; padding: 24px; margin: 30px 0; }
+.flash-save-lesson > div { flex: 1; min-width: 200px; }
+.flash-save-lesson h2 { font-size: 20px; }
+.flash-save-lesson p[role] { flex-basis: 100%; }
+@media(max-width:600px) { .flash-stats { gap: 8px; } .flash-stats > div { padding: 14px 10px; } .flash-stats span { font-size: 11px; } .flash-stats strong { font-size: 27px; } .flash-review-card { padding: 26px 18px; } .flash-list-card, .flash-history-row { padding: 18px; gap: 12px; flex-wrap: wrap; } .flash-list-card button { margin-left: auto; } .flash-start { align-items: stretch; flex-direction: column; } .flash-links { gap: 12px; } .flash-links a { font-size: 12px; } .flash-save-lesson { padding: 20px; } }
