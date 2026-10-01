@@ -9,7 +9,7 @@ import { loginDestination } from '../../../app/router/roleNavigation'
 import { useRequestCooldown } from '../../../shared/hooks/useRequestCooldown'
 
 export function AuthPage({ register = false }: { register?: boolean }) {
-  const { user, setUser } = useAuth()
+  const { user, checking, setUser, sessionExpired: currentSessionExpired, clearSessionExpired } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [busy, setBusy] = useState(false)
@@ -18,7 +18,7 @@ export function AuthPage({ register = false }: { register?: boolean }) {
   if (user) return <Navigate to={loginDestination(user, location.state?.from)} replace />
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (busy || cooldown.remaining > 0) return
+    if (checking || busy || cooldown.remaining > 0) return
     const form = new FormData(event.currentTarget)
     setBusy(true); setError('')
     try {
@@ -28,12 +28,15 @@ export function AuthPage({ register = false }: { register?: boolean }) {
         navigate('/login', { replace: true, state: { registered: true } })
       } else {
         const profile = await authApi.login(credentials)
+        clearSessionExpired()
         setUser(profile)
         navigate(loginDestination(profile, location.state?.from), { replace: true })
       }
     } catch (e) { setError(e instanceof Error ? e.message : 'Không thực hiện được yêu cầu.'); cooldown.apply(e) }
     finally { setBusy(false) }
   }
-  return <AuthLayout><LoginForm register={register} busy={busy} error={error}
-    registered={!!location.state?.registered} passwordChanged={!!location.state?.passwordChanged} retryIn={cooldown.remaining} onSubmit={submit} /></AuthLayout>
+  return <AuthLayout><LoginForm register={register} busy={busy || checking} error={error}
+    registered={!!location.state?.registered} passwordChanged={!!location.state?.passwordChanged}
+    sessionExpired={!register && (!!location.state?.sessionExpired || currentSessionExpired)}
+    retryIn={cooldown.remaining} onSubmit={submit} /></AuthLayout>
 }

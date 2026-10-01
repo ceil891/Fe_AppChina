@@ -4,7 +4,9 @@ export interface AuthState {
   user: Profile | null
   checking: boolean
   error: string
+  sessionExpired: boolean
   refresh: () => Promise<void>
+  clearSessionExpired: () => void
   setUser: (user: Profile | null) => void
   logout: () => Promise<void>
 }

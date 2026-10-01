@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../app/providers/AuthContext'
 import { useResource } from '../../shared/hooks/useResource'
 import { ApiError, mutate } from '../../services/api'
@@ -24,11 +24,12 @@ export function FoundationCards({ limit }: { limit?: number } = {}) {
 }
 
 export function FoundationCardList({ lessons }: { lessons: FoundationCard[] }) {
+  const { user } = useAuth()
   return <ol className="foundation-cards">{lessons.map((lesson, index) => {
     const content = <><div className="foundation-card-top"><span className="foundation-step">Bài {String(index + 1).padStart(2, '0')}</span><span className="foundation-badge"><Icon name={lesson.locked ? 'lock' : lesson.completed ? 'check' : 'book'} width="14" height="14" />{lesson.locked ? 'Chưa mở khóa' : lesson.completed ? 'Đã hoàn thành' : 'Sẵn sàng học'}</span></div>
       <div className="foundation-card-body"><span className="foundation-symbol" aria-hidden="true">{lesson.symbol}</span><div><h3>{lesson.title}</h3><p>{lesson.subtitle}</p></div></div>
       <div className="foundation-card-footer"><span><Icon name="clock" width="15" height="15" /> {lesson.minutes} phút</span><strong>{lesson.locked ? `Hoàn thành ${lesson.prerequisiteTitle ?? 'bài trước'} để mở` : lesson.completed ? 'Ôn lại bài →' : 'Bắt đầu học →'}</strong></div></>
-    return <li key={lesson.slug}>{lesson.locked ? <article className="foundation-card is-locked" aria-disabled="true">{content}</article> : <Link className={`foundation-card ${lesson.completed ? 'is-completed' : 'is-current'}`} to={foundationPath(lesson.slug)}>{content}</Link>}</li>
+    return <li key={lesson.slug}>{!user && lesson.locked ? <Link className="foundation-card is-locked" to="/login" state={{ from: foundationPath(lesson.slug) }}>{content}<p>Đăng nhập để học bài này →</p></Link> : lesson.locked ? <article className="foundation-card is-locked" aria-disabled="true">{content}</article> : <Link className={`foundation-card ${lesson.completed ? 'is-completed' : 'is-current'}`} to={foundationPath(lesson.slug)}>{content}{!user && <p>Học bài mẫu miễn phí →</p>}</Link>}</li>
   })}</ol>
 }
 
@@ -47,9 +48,11 @@ export function FoundationProgressOverview() {
 }
 
 export function FoundationsPage() {
+  const { user } = useAuth()
   return <main className="study-page foundations-page">
     <header className="study-heading"><p className="study-eyebrow">BƯỚC ĐẦU TIÊN · DÀNH CHO NGƯỜI MỚI</p><h1>Vững âm đầu.<br />Tự tin những câu đầu tiên.</h1><p>Làm quen Pinyin qua từng bài ngắn. Hoàn thành phần tự kiểm tra của bài trước để mở khóa bài tiếp theo.</p><div className="heading-chips"><span><Icon name="book" /> Học theo thứ tự</span><span><Icon name="check" /> Lưu từng bước tiến</span><span><Icon name="clock" /> Theo nhịp của bạn</span></div></header>
     <aside className="foundation-note"><strong>Tiếng Trung có “bảng chữ cái” không?</strong><p>Tiếng Trung dùng chữ Hán. Phần này hướng dẫn bảng âm Pinyin — cách ghi âm tiếng Phổ thông bằng chữ Latin để bạn học phát âm.</p></aside>
+    {!user && <p>Bạn được học thử một bài mẫu miễn phí. <Link to="/login" state={{ from: '/foundations' }}>Đăng nhập để học các bài tiếp theo →</Link></p>}
     <FoundationProgressOverview /><div className="learner-section-heading"><div><p className="study-eyebrow">LỘ TRÌNH NHẬP MÔN</p><h2>Từng bài nhỏ, nền tảng vững.</h2><p>Mỗi bài có giải thích, mẫu phát âm và phần tự kiểm tra.</p></div></div><FoundationCards />
     <section className="study-finish"><div><h2>Sau Pinyin là những câu chuyện mới.</h2><p>Hoàn thành cả 6 bài nhập môn để mở bài chủ đề, từ vựng, Quiz và 4 kỹ năng.</p></div><Link className="study-primary" to="/lessons">Khám phá bước tiếp theo →</Link></section>
   </main>
@@ -98,10 +101,14 @@ export function ToneChart() {
 }
 
 export function FoundationLessonPage() {
-  const { slug } = useParams(), { user } = useAuth()
-  const lesson = useResource<Lesson>(`/foundations/${encodeURIComponent(slug ?? '')}`)
-  const cards = useResource<FoundationCard[]>('/foundations')
+  const { slug } = useParams(), { user, checking } = useAuth()
+  const cards = useResource<FoundationCard[]>(checking ? null : '/foundations')
+  const locked = !user && cards.data?.some(card => card.slug === slug && card.locked)
+  const lesson = useResource<Lesson>(checking || (!user && !cards.data) || locked ? null : `/foundations/${encodeURIComponent(slug ?? '')}`)
   const progress = useResource<FoundationProgress[]>(user ? '/foundation-progress' : null)
+  if (checking || (!user && cards.loading)) return <main className="study-page" data-route-loading><Link className="study-back" to="/foundations">← Lộ trình nhập môn</Link><LoadingState label="Đang tải bài học…" /></main>
+  if (!user && cards.error) return <main className="study-page"><p role="alert">{cards.error}</p><button onClick={cards.reload}>Thử lại</button></main>
+  if (locked) return <Navigate to="/login" replace state={{ from: foundationPath(slug ?? '') }} />
   return <main className="study-page foundations-page foundation-lesson-page"><Link className="study-back" to="/foundations">← Lộ trình nhập môn</Link>
     {lesson.loading ? <LoadingState label="Đang tải bài nhập môn…" /> : lesson.error ? <div className="study-empty" role="alert"><Icon name="lock" width="32" height="32" /><h1>Chưa mở được bài nhập môn</h1><p>{cards.data?.find(card => card.slug === slug)?.locked ? `Hoàn thành ${cards.data.find(card => card.slug === slug)?.prerequisiteTitle ?? 'bài trước'} để mở bài này.` : lesson.error}</p><Link className="study-primary" to="/foundations">Về lộ trình</Link> <button onClick={() => { lesson.reload(); cards.reload() }}>Kiểm tra lại</button></div> : lesson.data && <LessonBody key={`${slug}-${lesson.data.version}-${user?.id ?? 'guest'}`} lesson={lesson.data} cards={cards.data ?? []} saved={progress.data?.find(p => p.slug === slug)} progressReady={!progress.loading && !progress.error} progressError={progress.error} reloadProgress={() => { progress.reload(); cards.reload() }} reloadLesson={lesson.reload} signedIn={!!user} />}
   </main>

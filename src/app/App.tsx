@@ -12,6 +12,7 @@ import { homePath } from './router/roleNavigation'
 import { hasManagementAccess } from './router/permissions'
 import { AdminLayout } from '../features/admin/components/AdminLayout'
 import { RouteAccessibility } from './router/RouteAccessibility'
+import { LoadingState } from '../shared/components/LoadingState'
 
 const AdminGeneralSettingsPage = lazy(() => import('../features/admin/pages/AdminGeneralSettingsPage').then(module => ({ default: module.AdminGeneralSettingsPage })))
 const AdminCoursesPage = lazy(() => import('../features/admin/pages/AdminCoursesPage').then(module => ({ default: module.AdminCoursesPage })))
@@ -62,7 +63,7 @@ const SkillHistoryPage = lazy(() => import('../features/skills/SkillsPage').then
 const AdminLearnerSkillsPage = lazy(() => import('../features/admin/pages/AdminLearnerSkillsPage').then(module => ({ default: module.AdminLearnerSkillsPage })))
 
 function AppRoutes() {
-  const { user, checking, error, refresh, logout } = useAuth()
+  const { user, error, refresh, logout } = useAuth()
   const [logoutError, setLogoutError] = useState('')
   const [busy, setBusy] = useState(false)
   const navigate = useNavigate()
@@ -72,11 +73,10 @@ function AppRoutes() {
     catch { setLogoutError('Chưa đăng xuất được. Vui lòng thử lại.') }
     finally { setBusy(false) }
   }
-  if (checking) return <main><p role="status">Đang kiểm tra phiên đăng nhập…</p></main>
-  if (error) return <main><p role="alert">{error}</p><button onClick={() => void refresh()}>Thử lại</button></main>
   return <>
+    {error && <aside role="alert"><p>{error}</p><button onClick={() => void refresh()}>Thử lại</button></aside>}
     <RouteAccessibility />
-    <Suspense fallback={<main className="route-loading" data-route-loading role="status">Đang mở trang…</main>}><Routes>
+    <Suspense fallback={<main data-route-loading><LoadingState label="Đang mở trang…" /></main>}><Routes>
       <Route path="/account/forgot" element={<AccountEmailPage key="forgot" mode="forgot" />} /><Route path="/account/reset" element={<AccountEmailPage key="reset" mode="reset" />} /><Route path="/account/verify" element={<AccountEmailPage key="verify" mode="verify" />} />
       <Route path="/" element={<Navigate to={homePath(user)} replace />} />
       <Route path="/login" element={<><header className="auth-site-header"><Brand /><Link to="/home">Khám phá bài học →</Link></header><AuthPage key="login" /></>} />

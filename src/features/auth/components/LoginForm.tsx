@@ -3,8 +3,8 @@ import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Icon } from '../../../shared/components/Icon'
 import { PasswordInput } from './PasswordInput'
-export function LoginForm({ register, busy, error, registered, passwordChanged = false, retryIn = 0, onSubmit }: {
-  register: boolean; busy: boolean; error: string; registered: boolean; passwordChanged?: boolean; retryIn?: number; onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
+export function LoginForm({ register, busy, error, registered, passwordChanged = false, sessionExpired = false, retryIn = 0, onSubmit }: {
+  register: boolean; busy: boolean; error: string; registered: boolean; passwordChanged?: boolean; sessionExpired?: boolean; retryIn?: number; onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
 }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -28,6 +28,7 @@ export function LoginForm({ register, busy, error, registered, passwordChanged =
     <p className="card-description">{register ? 'Tạo tài khoản để cùng học tiếng Trung mỗi ngày' : 'Đăng nhập để tiếp tục hành trình học tập'}</p>
     {registered && !register && <div className="auth-alert success" role="status"><Icon name="check" /><span>Đã tạo tài khoản. Bạn có thể đăng nhập.</span></div>}
     {passwordChanged && !register && <div className="auth-alert success" role="status"><Icon name="check" /><span>Đã đổi mật khẩu và đăng xuất các phiên cũ. Hãy đăng nhập bằng mật khẩu mới.</span></div>}
+    {sessionExpired && !register && <div className="auth-alert session-expired-card" role="status"><Icon name="clock" /><span><strong>Phiên học vừa hết hạn</strong><br />Vì lý do bảo mật, bạn đã được đăng xuất. Đăng nhập lại để tiếp tục; bài học bạn đang mở sẽ được giữ.</span></div>}
     <form className="auth-form" onSubmit={submit} noValidate aria-busy={busy}>
       {register && <div className="auth-field"><label htmlFor="displayName">Tên hiển thị</label><div className="auth-input-wrap"><Icon name="user" className="input-icon" /><input id="displayName" name="displayName" placeholder="Bạn muốn được gọi là gì?" required maxLength={80} autoComplete="nickname" value={displayName} readOnly={busy}
         aria-invalid={!!errors.displayName} aria-describedby={errors.displayName ? 'name-error' : undefined}

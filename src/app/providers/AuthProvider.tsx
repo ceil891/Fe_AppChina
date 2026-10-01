@@ -10,6 +10,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Profile | null>(null)
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
+  const [sessionExpired, setSessionExpired] = useState(false)
   const refresh = useCallback(async () => {
     try { setUser(await authApi.me()); setError('') }
     catch (e) {
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setError('Chưa kiểm tra được phiên đăng nhập. Hãy thử lại.')
         }
       }).finally(() => { if (active) setChecking(false) })
-    const expired = () => setUser(null)
+    const expired = () => { setUser(null); setSessionExpired(true) }
     window.addEventListener('auth-expired', expired)
     return () => { active = false; window.removeEventListener('auth-expired', expired) }
   }, [])
@@ -35,5 +36,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearNoteDrafts()
     setUser(null)
   }
-  return <AuthContext.Provider value={{ user, checking, error, refresh, setUser, logout }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, checking, error, sessionExpired, refresh, clearSessionExpired: () => setSessionExpired(false), setUser, logout }}>{children}</AuthContext.Provider>
 }

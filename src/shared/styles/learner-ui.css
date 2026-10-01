@@ -16,6 +16,12 @@
   min-height: 100dvh;
 }
 .learner-shell *, .learner-shell *::before, .learner-shell *::after { box-sizing: border-box; }
+.session-expired-notice { display: flex; align-items: center; gap: 14px; width: min(1120px,calc(100% - 40px)); margin: 16px auto 0; padding: 16px 20px; border: 1px solid #ead1a3; border-radius: 14px; background: #fff9ed; color: #614c26; }
+.session-expired-icon { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px; background: #f6e9c9; color: #896c35; font-size: 24px; }
+.session-expired-notice > div { flex: 1; min-width: 0; }
+.session-expired-notice p { margin: 2px 0 0; color: #746447; font-size: 13px; }
+.session-expired-notice > a { flex: 0 0 auto; padding: 9px 13px; border: 1px solid #e6d0a4; border-radius: 9px; color: #624e28; background: #fff; font-size: 13px; font-weight: 650; text-decoration: none; }
+.session-expired-notice > a:hover { background: #f9efd9; }
 .learner-shell .study-page { width: 100%; max-width: 1224px; margin: 32px auto 64px; padding: 0 28px; flex: 1; color: var(--ink); }
 .learner-shell h1, .learner-shell h2, .learner-shell h3 { color: var(--ink); line-height: 1.3; }
 .learner-shell h2 { font-size: 24px; letter-spacing: -.5px; }

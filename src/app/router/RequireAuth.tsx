@@ -1,7 +1,9 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../providers/AuthContext'
+import { LoadingState } from '../../shared/components/LoadingState'
 export function RequireAuth() {
-  const { user } = useAuth()
+  const { user, checking, error, sessionExpired } = useAuth()
   const location = useLocation()
-  return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname === '/skills' && /^\?skill=(LISTENING|SPEAKING|READING|WRITING)$/.test(location.search) ? location.pathname + location.search : location.pathname }} />
+  if (!user && (checking || error)) return <main className="study-page" data-route-loading><LoadingState label="Đang tải nội dung…" /></main>
+  return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname + location.search, sessionExpired }} />
 }

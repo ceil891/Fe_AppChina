@@ -126,12 +126,16 @@ try {
   test('Locked foundation cards expose no lesson link while current and completed lessons remain accessible', () => {
     const base = { title: 'Pinyin', subtitle: 'Học từng bước', minutes: 5, symbol: '拼', position: 1, version: 1, prerequisiteSlug: null, prerequisiteTitle: null, completed: false }
     const lessons = [{ ...base, slug: 'first', locked: false, completed: true }, { ...base, slug: 'second', locked: false }, { ...base, slug: 'third', locked: true, prerequisiteSlug: 'second', prerequisiteTitle: 'Bài hai' }]
-    const html = renderToStaticMarkup(h(MemoryRouter, null, h(FoundationCardList, { lessons })))
+    const html = renderToStaticMarkup(h(AuthContext.Provider, { value: { user: { id: 'learner' } } }, h(MemoryRouter, null, h(FoundationCardList, { lessons }))))
     assert.ok(html.includes('href="/foundations/first"'))
     assert.ok(html.includes('href="/foundations/second"'))
     assert.ok(!html.includes('href="/foundations/third"'))
     assert.ok(html.includes('aria-disabled="true"'))
     assert.ok(html.includes('Hoàn thành Bài hai để mở'))
+    const guest = renderToStaticMarkup(h(AuthContext.Provider, { value: { user: null } }, h(MemoryRouter, null, h(FoundationCardList, { lessons }))))
+    assert.ok(guest.includes('href="/login"'))
+    assert.ok(guest.includes('Đăng nhập để học bài này'))
+    assert.ok(!guest.includes('href="/foundations/third"'))
   })
   const { FoundationEditor } = await server.ssrLoadModule('/src/features/admin/pages/AdminFoundationsPage.tsx')
   test('Removing skill oversight preserves unrelated account permissions', () => {

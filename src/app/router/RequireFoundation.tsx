@@ -9,9 +9,9 @@ import type { FoundationCard } from '../../features/foundations/types'
 import '../../shared/styles/study.css'
 
 export function RequireFoundation() {
-  const { user } = useAuth()
-  const lessons = useResource<FoundationCard[]>('/foundations')
-  if (lessons.loading) return <main className="study-page"><LoadingState label="Đang kiểm tra lộ trình Pinyin…" /></main>
+  const { user, checking } = useAuth()
+  const lessons = useResource<FoundationCard[]>(checking ? null : '/foundations')
+  if (checking || lessons.loading) return <main className="study-page" data-route-loading><LoadingState label="Đang tải nội dung…" /></main>
   if (lessons.error) return <main className="study-page"><div className="study-error" role="alert"><h1>Chưa tải được tiến độ Pinyin</h1><p>{lessons.error}</p><button onClick={lessons.reload}>Thử lại</button></div></main>
   if (user && foundationAccess(lessons.data).unlocked) return <Outlet />
   return <FoundationGate lessons={lessons.data ?? []} signedIn={!!user} />
